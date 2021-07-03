@@ -1,3 +1,0 @@
-# Pendula
-
-A pendulum visualiser.
