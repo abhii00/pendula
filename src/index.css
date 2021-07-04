@@ -1,0 +1,15 @@
+body{
+    background-color: white;
+}
+
+.rod{
+    stroke: white;
+    stroke-width:2
+}
+
+.canvas{
+    background-color:black;
+
+    display: block;
+    margin:auto;
+}
