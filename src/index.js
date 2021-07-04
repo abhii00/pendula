@@ -10,15 +10,15 @@ class DoublePendulum extends React.Component
         super(props);
 
         this.consts = {
-            canvWidth: 1000,
-            canvHeight: 800,
+            intervalTime: 0.001,
+            dt: 0.1,
             xpiv: 500,
-            ypiv: 300,
-            l1: 100,
-            l2: 100,
-            m1: 1,
-            m2: 1,
-            g: 9.8
+            ypiv: 200,
+            l1: 200,
+            l2: 200,
+            m1: 10000,
+            m2: 10000,
+            g: 9.81
         }
 
         this.state = {
@@ -30,7 +30,6 @@ class DoublePendulum extends React.Component
             theta2dot: this.props.theta2dot,
             theta2ddot: this.props.theta2ddot,
             theta2ddotnew: 0,
-            dt: 0.0001,
             x1: 0,
             y1: this.consts.l1,
             x2: 0,
@@ -38,22 +37,18 @@ class DoublePendulum extends React.Component
         }
         
         this.updatePosition = this.updatePosition.bind(this);
-        this.vVerlet = this.vVerlet.bind(this);
-        this.updateAccelerations = this.updateAccelerations.bind(this);
-        this.setCartesian = this.setCartesian.bind(this);
     }
 
     componentDidMount(){
-        this.interval = setInterval(this.updatePosition, this.consts.dt*1000);
+        this.interval = setInterval(this.updatePosition, this.consts.intervalTime*1000);
     }
 
     updatePosition(){
         this.vVerlet();
         this.setCartesian();
-            console.log(this.state.theta1, this.state.theta2)
     }
 
-    updateAccelerations(){
+    updateAcceleration(){
         var m1 = this.consts.m1;
         var m2 = this.consts.m2;
         var l1 = this.consts.l1;
@@ -74,7 +69,7 @@ class DoublePendulum extends React.Component
             theta1: this.state.theta1 + this.state.theta1dot*this.consts.dt + 0.5*this.state.theta1ddot*(this.consts.dt**2),
             theta2: this.state.theta2 + this.state.theta2dot*this.consts.dt + 0.5*this.state.theta2ddot*(this.consts.dt**2)
         })
-        this.updateAccelerations();
+        this.updateAcceleration();
         this.setState({
             theta1dot: this.state.theta1dot + 0.5*(this.state.theta1ddot+this.state.theta1ddotnew)*this.consts.dt,
             theta2dot: this.state.theta2dot + 0.5*(this.state.theta2ddot+this.state.theta2ddotnew)*this.consts.dt,
@@ -101,25 +96,41 @@ class DoublePendulum extends React.Component
 
     render(){
         return (
-            <svg width={this.consts.canvWidth} height={this.consts.canvHeight} className="canvas">
-                <line x1={this.consts.xpiv} y1={this.consts.ypiv} x2={this.consts.xpiv+this.state.x1} y2={this.consts.ypiv+this.state.y1} className="rod"/>
-                <line x1={this.consts.xpiv+this.state.x1} y1={this.consts.ypiv+this.state.y1} x2={this.consts.xpiv+this.state.x2} y2={this.consts.ypiv+this.state.y2} className="rod"/>
-            </svg>
+            <React.Fragment>
+                <line x1={this.consts.xpiv} y1={this.consts.ypiv} x2={this.consts.xpiv+this.state.x1} y2={this.consts.ypiv+this.state.y1} className="rod" style={{stroke: this.props.color}}/>
+                <line x1={this.consts.xpiv+this.state.x1} y1={this.consts.ypiv+this.state.y1} x2={this.consts.xpiv+this.state.x2} y2={this.consts.ypiv+this.state.y2} className="rod" style={{stroke: this.props.color}}/>
+            </React.Fragment>
         );
     }
 }
 
 class PendulumContainer extends React.Component
 //component to contain pendula
-{
-    renderDoublePendula(theta1, theta1dot, theta1ddot, theta2, theta2dot, theta2ddot){
-        return <DoublePendulum theta1={theta1} theta1dot={theta1dot} theta1ddot={theta1ddot} theta2={theta2} theta2dot={theta2dot} theta2ddot={theta2ddot} />;
+{   
+    constructor(props){
+        super(props);
+        this.consts = {
+            canvWidth: 1000,
+            canvHeight: 800,
+        }
+        this.renderDoublePendulum = this.renderDoublePendulum.bind(this);
+    }
+
+    renderDoublePendulum(theta1, theta1dot, theta1ddot, theta2, theta2dot, theta2ddot, color){
+        return <DoublePendulum theta1={theta1} theta1dot={theta1dot} theta1ddot={theta1ddot} theta2={theta2} theta2dot={theta2dot} theta2ddot={theta2ddot} color={color}/>;
     }
 
     render(){
+        var num = 75;
+        var pendula = Array(num);
+        for (var i = 0; i < num; i++){
+            pendula[i] = this.renderDoublePendulum(0,0,0,i*Math.PI/num,0,0,"white");
+        }
         return(
             <div>
-                {this.renderDoublePendula(Math.PI/6,0,0,0,0,0)}
+                <svg width={this.consts.canvWidth} height={this.consts.canvHeight} className="canvas">
+                    {pendula}
+                </svg>
             </div> 
         );
     }

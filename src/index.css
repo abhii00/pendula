@@ -1,15 +1,12 @@
 body{
-    background-color: white;
+    background-color: black;
 }
 
 .rod{
-    stroke: white;
-    stroke-width:2
+    stroke-width: 1;
 }
 
 .canvas{
-    background-color:black;
-
     display: block;
-    margin:auto;
+    margin: auto;
 }
