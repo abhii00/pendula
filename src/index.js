@@ -10,10 +10,11 @@ class DoublePendulum extends React.Component
         super(props);
 
         this.consts = {
-            intervalTime: 0.001,
+            intervalTime: 0.00001,
             dt: 0.1,
+            maxpathLength: 500,
             xpiv: 500,
-            ypiv: 200,
+            ypiv: 400,
             l1: 200,
             l2: 200,
             m1: 10000,
@@ -33,7 +34,9 @@ class DoublePendulum extends React.Component
             x1: 0,
             y1: this.consts.l1,
             x2: 0,
-            y2: this.consts.l1+this.consts.l2
+            y2: this.consts.l1+this.consts.l2,
+            path: "",
+            pathLength: 0,
         }
         
         this.updatePosition = this.updatePosition.bind(this);
@@ -46,6 +49,7 @@ class DoublePendulum extends React.Component
     updatePosition(){
         this.vVerlet();
         this.setCartesian();
+        this.updatePath();
     }
 
     updateAcceleration(){
@@ -78,13 +82,6 @@ class DoublePendulum extends React.Component
         })
     }
 
-    swing(){
-        this.setState({
-            theta1: this.state.theta1 + 0.001,
-            theta2: this.state.theta2 + 0.005,
-        })
-    }
-
     setCartesian(){
         this.setState({
             x1: this.consts.l1*Math.sin(this.state.theta1),
@@ -94,11 +91,58 @@ class DoublePendulum extends React.Component
         });
     }    
 
-    render(){
+    updatePath(){
+        var newpath = this.state.path;
+        var newpathLength = this.state.pathLength + 1;
+
+        newpath += (this.state.x2+this.consts.xpiv).toString() + "," + (this.state.y2+this.consts.ypiv).toString() + " ";
+
+        if (newpathLength > this.consts.maxpathLength){
+            while (newpath.charAt(0) !== " "){
+                newpath = newpath.substring(1);
+            }
+            newpath = newpath.substring(1);
+            newpathLength -= 1;
+        }
+
+        this.setState({
+            path: newpath,
+            pathLength: newpathLength
+        })
+    }
+
+    renderPath(){
+        return <polyline points={this.state.path} className="path" style={{stroke: this.props.pcolor}}></polyline>;
+    }
+
+    renderRods(){
         return (
             <React.Fragment>
-                <line x1={this.consts.xpiv} y1={this.consts.ypiv} x2={this.consts.xpiv+this.state.x1} y2={this.consts.ypiv+this.state.y1} className="rod" style={{stroke: this.props.color}}/>
-                <line x1={this.consts.xpiv+this.state.x1} y1={this.consts.ypiv+this.state.y1} x2={this.consts.xpiv+this.state.x2} y2={this.consts.ypiv+this.state.y2} className="rod" style={{stroke: this.props.color}}/>
+                <line x1={this.consts.xpiv} y1={this.consts.ypiv} x2={this.consts.xpiv+this.state.x1} y2={this.consts.ypiv+this.state.y1} className="rod"/>
+                <line x1={this.consts.xpiv+this.state.x1} y1={this.consts.ypiv+this.state.y1} x2={this.consts.xpiv+this.state.x2} y2={this.consts.ypiv+this.state.y2} className="rod"/>
+            </React.Fragment>
+        );
+    }
+
+    render(){
+        switch(this.props.display){
+            case 0:
+                var pendulum = Array(2);
+                pendulum[0] = this.renderRods();
+                pendulum[1] = this.renderPath();
+                break;
+            case 1:
+                pendulum = this.renderRods();
+                break;
+            case 2:
+                pendulum = this.renderPath();
+                break;
+            default:
+                break;
+        }
+        return (
+            <React.Fragment>
+                {pendulum}
             </React.Fragment>
         );
     }
@@ -116,15 +160,20 @@ class PendulumContainer extends React.Component
         this.renderDoublePendulum = this.renderDoublePendulum.bind(this);
     }
 
-    renderDoublePendulum(theta1, theta1dot, theta1ddot, theta2, theta2dot, theta2ddot, color){
-        return <DoublePendulum theta1={theta1} theta1dot={theta1dot} theta1ddot={theta1ddot} theta2={theta2} theta2dot={theta2dot} theta2ddot={theta2ddot} color={color}/>;
+    renderDoublePendulum(theta1, theta1dot, theta1ddot, theta2, theta2dot, theta2ddot, pcolor, display){
+        return <DoublePendulum theta1={theta1} theta1dot={theta1dot} theta1ddot={theta1ddot} theta2={theta2} theta2dot={theta2dot} theta2ddot={theta2ddot} pcolor={pcolor} display={display}/>;
+        //display: 0: rod&path, 1: rod, 2: path
+    }
+
+    pickRandomColor(){
+        return "rgb(" + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + "," + Math.floor(Math.random()*255) + ")";
     }
 
     render(){
-        var num = 75;
+        var num = 5;
         var pendula = Array(num);
         for (var i = 0; i < num; i++){
-            pendula[i] = this.renderDoublePendulum(0,0,0,i*Math.PI/num,0,0,"white");
+            pendula[i] = this.renderDoublePendulum(Math.PI/2+i*0.1,0,0,0,0,0, this.pickRandomColor(), 0);
         }
         return(
             <div>
