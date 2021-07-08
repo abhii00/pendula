@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import './index.css'
 import DoublePendulum from './components/DoublePendulum.js'
+import TriplePendulum from './components/TriplePendulum.js'
 
 class PendulumContainer extends React.Component
 //component to contain pendula
