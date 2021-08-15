@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/pendula/static/css/main.2eaf3d22.chunk.css",
+    "main.js": "/pendula/static/js/main.c0850567.chunk.js",
+    "main.js.map": "/pendula/static/js/main.c0850567.chunk.js.map",
+    "runtime-main.js": "/pendula/static/js/runtime-main.8479c05c.js",
+    "runtime-main.js.map": "/pendula/static/js/runtime-main.8479c05c.js.map",
+    "static/js/2.a640c87c.chunk.js": "/pendula/static/js/2.a640c87c.chunk.js",
+    "static/js/2.a640c87c.chunk.js.map": "/pendula/static/js/2.a640c87c.chunk.js.map",
+    "index.html": "/pendula/index.html",
+    "static/css/main.2eaf3d22.chunk.css.map": "/pendula/static/css/main.2eaf3d22.chunk.css.map",
+    "static/js/2.a640c87c.chunk.js.LICENSE.txt": "/pendula/static/js/2.a640c87c.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8479c05c.js",
+    "static/js/2.a640c87c.chunk.js",
+    "static/css/main.2eaf3d22.chunk.css",
+    "static/js/main.c0850567.chunk.js"
+  ]
+}
