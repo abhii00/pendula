@@ -2,6 +2,8 @@
 
 Simulation of pendula to display chaotic dynamics.
 
+:negative_squared_cross_mark: TEMPORARILY ON HOLD :negative_squared_cross_mark:
+
 _June 2021_
 
 ```JAVASCRIPT, REACTJS```
